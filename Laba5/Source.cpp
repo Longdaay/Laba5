@@ -103,10 +103,15 @@ void digit_to_char(int digit) // добавление символа в зависимости от значения ве
 void revers_char(int digit)
 {
 	std::vector<int> arr;
+	if (digit == 0)
+	{
+		arr.push_back(0);
+	}
 	while (digit != 0)
 	{
 		arr.push_back(digit % 10);
 		digit = digit / 10;
+
 	}
 	for (int i = arr.size() - 1; i >= 0; i--)
 	{
@@ -138,13 +143,15 @@ void X_to_Y(int position, int final_vertex, int number_of_steps, int number_of_a
 	{
 		X_to_Y(position - 1, final_vertex, number_of_steps - 1, number_of_angles, vivod, zadan); // рекурсия на шаг назад
 		X_to_Y(position + 1, final_vertex, number_of_steps - 1, number_of_angles, vivod, zadan); // рекурсия на шаг вперед
-		s.erase(s.rfind('>') - 1); // удаляем старый путь вершины
+		s.erase(s.size() - 1); // удаляем старый путь вершины
+		s.erase(s.rfind('>') + 1); // удаляем старый путь вершины
 	}
 	else if (position == final_vertex and number_of_steps > 0) //если шаги еще есть и позиция является конечной
 	{
 		X_to_Y(position - 1, final_vertex, number_of_steps - 1, number_of_angles, vivod, zadan); // рекурсия на шаг назад
 		X_to_Y(position + 1, final_vertex, number_of_steps - 1, number_of_angles, vivod, zadan); // рекурсия на шаг вперед
-		s.erase(s.rfind('>') - 1); // удаляем старый путь вершины
+		s.erase(s.size() - 1); // удаляем старый путь вершины
+		s.erase(s.rfind('>') + 1); // удаляем старый путь вершины
 	}
 	else if (position == final_vertex and number_of_steps == 0) // если шаги закончились и конечная точка достигнута
 	{
@@ -166,7 +173,10 @@ void X_to_Y(int position, int final_vertex, int number_of_steps, int number_of_a
 			s.erase(s.rfind('>') + 1); // удаляем вершину
 		}
 		else
-			s.erase(s.rfind('>') - 1); // удаляем > и вершину
+		{
+			s.erase(s.size() - 1);
+			s.erase(s.rfind('>') + 1); // удаляем > и вершину
+		}
 		return;
 	}
 }
@@ -193,20 +203,23 @@ void X_to_Y_not_Q(int position, int final_vertex, int number_of_steps, int q_roc
 	}
 	if (position == q_rock) // если достигли точки, через которую нельзя идти
 	{
-		s.erase(s.rfind('>') - 1); //удаляем вершину
+		s.erase(s.size() - 1);
+		s.erase(s.rfind('>') + 1); //удаляем вершину
 		return;
 	}
 	else if (position != final_vertex and number_of_steps > 0)  // если шаги еще есть и позиция не является конечной
 	{
 		X_to_Y_not_Q(position - 1, final_vertex, number_of_steps - 1, q_rock, number_of_angles, vivod, zadan); // рекурсия на шаг назад
 		X_to_Y_not_Q(position + 1, final_vertex, number_of_steps - 1, q_rock, number_of_angles, vivod, zadan); // рекурсия на шаг вперед
-		s.erase(s.rfind('>') - 1); // удаляем старый путь вершины
+		s.erase(s.size() - 1);
+		s.erase(s.rfind('>') + 1); // удаляем старый путь вершины
 	}
 	else if (position == final_vertex and number_of_steps > 0) //если шаги еще есть и позиция является конечной
 	{
 		X_to_Y_not_Q(position - 1, final_vertex, number_of_steps - 1, q_rock, number_of_angles, vivod, zadan); // рекурсия на шаг назад
 		X_to_Y_not_Q(position + 1, final_vertex, number_of_steps - 1, q_rock, number_of_angles, vivod, zadan); // рекурсия на шаг вперед
-		s.erase(s.rfind('>') - 1);  // удаляем старый путь вершины
+		s.erase(s.size() - 1);
+		s.erase(s.rfind('>') + 1);  // удаляем старый путь вершины
 	}
 	else if (position == final_vertex and number_of_steps == 0) // если шаги закончились и конечная точка достигнута
 	{
@@ -228,7 +241,10 @@ void X_to_Y_not_Q(int position, int final_vertex, int number_of_steps, int q_roc
 			s.erase(s.rfind('>') + 1); // удаляем вершину
 		}
 		else
-			s.erase(s.rfind('>') - 1); // удаляем > и вершину
+		{
+			s.erase(s.size() - 1); // удаляем >
+			s.erase(s.rfind('>') + 1); // удаляем > и вершину
+		}
 		return;
 	}
 }
@@ -291,7 +307,7 @@ int main()
 	int last_vertex; // конечная позиция, которую должен достигнуть кузнечик
 	int number_of_angles; // количество углов в n-угольнике
 	int q_rock; // индекс, через который не проходит кузнечик
-	
+
 	// Задание 1 - по заданным значениям
 	std::cout << "Задание 1 - Количество путей от А до С за n шагов" << std::endl;
 	std::cout << "Введите количество шагов: ";
@@ -333,7 +349,6 @@ int main()
 	vidod = checkparam();
 	X_to_Y(first_vertex, last_vertex, number_of_steps, number_of_angles, vidod, 1);
 	std::cout << "Количество хороших путей: " << good_ways << std::endl;
-	
 
 	// Задание 2* - по значениям пользователя
 	good_ways = 0;
