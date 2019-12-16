@@ -137,21 +137,18 @@ void revers_char(int digit) // Для ввода пути n-значного значения
 
 void X_to_Y(int position, int final_vertex, int number_of_steps, int number_of_angles, int vivod, int zadan) // функция для просчета количество путей из точки x в точку y за n шагов
 {
-	int del_part; // удаляем в строке прошлую вершину
 	if (position == -1) // если меньше 0
 		position = number_of_angles - 1; // максимальный индекс n-угольника
 	if (position == number_of_angles) // если больше максимального индекса n-угольника
 		position = 0; // минимальный индекс n-угольника
 	if (zadan) // в зависимости от задания выводим буквы или цифры
 	{	// вывод индексов 
-		del_part = 3;
 		s.push_back('x'); 
 		revers_char(position);
 		s.push_back('>');
 	}
 	else // вывод букв
 	{
-		del_part = 2;
 		digit_to_latter(position);
 		s.push_back('>');
 	}
@@ -199,21 +196,18 @@ void X_to_Y(int position, int final_vertex, int number_of_steps, int number_of_a
 
 void X_to_Y_not_Q(int position, int final_vertex, int number_of_steps, int q_rock, int number_of_angles, int vivod, int zadan) // функция для просчета количество путей из точки x в точку y за n шагов без захода в точку q
 { 
-	int del_part; // удаляем в строке прошлую вершину
 	if (position == -1) // если меньше 0
 		position = number_of_angles - 1; // максимальный индекс n-угольника
 	if (position == number_of_angles) // если больше максимального индекса n-угольника
 		position = 0; // минимальный индекс n-угольника
 	if (zadan) // в зависимости от задания выводим буквы или цифры
 	{	// вывод индексов 
-		del_part = 3;
 		s.push_back('x');
 		revers_char(position);
 		s.push_back('>');
 	}
 	else // вывод букв
 	{	
-		del_part = 2;
 		digit_to_latter(position);
 		s.push_back('>');
 	}
@@ -265,30 +259,53 @@ void X_to_Y_not_Q(int position, int final_vertex, int number_of_steps, int q_roc
 	}
 }
 
-void X_to_bomb(int position, int bomb, int number_of_steps, int number_of_angles) // функция для расчета удачных и неудачных путей через n секунд, когда в одной из вершин мина
+void X_to_bomb(int position, int bomb, int number_of_steps, int number_of_angles, int zadan) // функция для расчета удачных и неудачных путей через n секунд, когда в одной из вершин мина
 {
 	if (position == -1) // если меньше 0
 		position = number_of_angles - 1; // максимальный индекс n-угольника
 	if (position == number_of_angles) // если больше максимального индекса n-угольника
 		position = 0; // минимальный индекс n-угольника
-
-	if (position == bomb and number_of_steps > 0) // если достигли мины и шаги еще есть
+	if (zadan) // в зависимости от задания выводим буквы или цифры
+	{	// вывод индексов 
+		s.push_back('x');
+		revers_char(position);
+		s.push_back('>');
+	}
+	else // вывод букв
 	{
+		digit_to_latter(position);
+		s.push_back('>');
+	}
+	if (position == bomb) // если достигли мины и шаги еще есть
+	{
+		s.erase(s.size() - 1);
+		std::cout << s << " - мина, убит! " << std::endl;
+		s.erase(s.rfind('>') + 1); //удаляем вершину
 		bad_ways++; // добавляем неудачный путь
 		return;
 	}
 	else if (position != bomb and number_of_steps > 0) // если не достигли мины и шаги еще есть
 	{
-		X_to_bomb(position - 1, bomb, number_of_steps - 1, number_of_angles); // рекурсия на шаг назад
-		X_to_bomb(position + 1, bomb, number_of_steps - 1, number_of_angles); // рекурсия на шаг вперед
+		X_to_bomb(position - 1, bomb, number_of_steps - 1, number_of_angles, zadan); // рекурсия на шаг назад
+		X_to_bomb(position + 1, bomb, number_of_steps - 1, number_of_angles, zadan); // рекурсия на шаг вперед
+		s.erase(s.size() - 1);
+		s.erase(s.rfind('>') + 1);  // удаляем старый путь вершины
 	}
 	else if (position != bomb and number_of_steps == 0) // если не достигли мины и шагов уже нет 
 	{
+		s.erase(s.size() - 1); // удаляем >
+		std::cout << s << std::endl; // выводим путь
+		s.erase(s.rfind('>') + 1); // удаляем вершину
 		good_ways++; // добавляем удачный путь
 		return;
 	}
 	else
+	{
+		s.erase(s.size() - 1); // удаляем >
+		std::cout << s << std::endl; // выводим путь
+		s.erase(s.rfind('>') + 1); // удаляем вершину
 		return;
+	}
 }
 
 void vvod(int &first_vertex, int &last_vertex, int &number_of_steps, int &number_of_angles, int param) // функция для оптимизации приема переменных
@@ -323,7 +340,7 @@ int main()
 	int last_vertex; // конечная позиция, которую должен достигнуть кузнечик
 	int number_of_angles; // количество углов в n-угольнике
 	int q_rock; // индекс, через который не проходит кузнечик
-
+	
 	// Задание 1 - по заданным значениям
 	std::cout << "Задание 1 - Количество путей от А до С за n шагов" << std::endl;
 	std::cout << "Введите количество шагов: ";
@@ -351,7 +368,7 @@ int main()
 	std::cout << std::endl << "Задание 3 - Подсчет вероятности выживания кузнечика через n секунд" << std::endl;
 	std::cout << "Введите количество секунд: ";
 	number_of_steps = checkdigit();
-	X_to_bomb(0, 4, number_of_steps, 8);
+	X_to_bomb(0, 4, number_of_steps, 8, 0);
 	std::cout << "Не выживает в " << bad_ways << " случаях" << std::endl;
 	std::cout << "Выживает в " << good_ways <<" случаях" << std::endl;
 	std::cout << "Вероятность того, что кузнечик будет жить через " << number_of_steps << " секунд равна " << 1.0 - (float(bad_ways)/float(good_ways)) << std::endl;
@@ -383,7 +400,7 @@ int main()
 	good_ways = 0;
 	bad_ways = 0;
 	vvod(first_vertex, last_vertex, number_of_steps, number_of_angles, 1);
-	X_to_bomb(first_vertex, last_vertex, number_of_steps, number_of_angles);
+	X_to_bomb(first_vertex, last_vertex, number_of_steps, number_of_angles, 1);
 	std::cout << "Не выживает в " << bad_ways << " случаях" << std::endl;
 	std::cout << "Выживает в " << good_ways << " случаях" << std::endl;
 	std::cout << "Вероятность того, что кузнечик будет жить через " << number_of_steps << " секунд равна " << 1.0 - (float(bad_ways) / float(good_ways)) << std::endl;
